@@ -1,107 +1,116 @@
 # Palworld Dedicated → Local Save Converter
 
-A guided Windows wizard that moves a Palworld world off a rented dedicated server
-and onto your own PC as a normal local / co-op save. Your character, pals, guild
-and bases come with it.
+A guided Windows wizard that moves a Palworld world off a rented dedicated
+server and onto your own PC as a normal local / co-op save. Your character,
+pals, guild and bases come with it.
 
-Built for the case where you want to stop paying for hosting but keep the world.
+For when you want to stop paying for hosting but keep the world.
 
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Why this exists
+## Download
 
-A dedicated-server save and a local save are stored differently — mainly in how
-your character is bound to the world — so the files cannot simply be copied
-across. A converter fixes that, but the steps around it (stopping the server,
-pulling the right folder, finding your local save slot, putting the result in the
-right place without destroying an existing world) are fiddly and easy to get
-wrong.
+**[Download the latest release](../../releases/latest)** → grab
+`Palworld-Save-Converter.zip`, extract it anywhere, and double-click
+**`Run Palworld Save Converter.cmd`**.
 
-This wizard handles all of that. It does not reimplement the conversion itself —
-that is done by an existing in-browser converter, which is the part it hands off to.
+That's it. The wizard explains everything else as you go.
 
-## Getting started
+Windows will show *"Windows protected your PC"* the first time — click
+**More info → Run anyway**. That warning appears for any script that isn't
+code-signed, and code signing costs a few hundred dollars a year.
 
-1. Download this repository (green **Code** button → **Download ZIP**) and extract it.
-2. Double-click **`Run Palworld Save Converter.cmd`**.
-3. Follow the wizard.
+## ⚠️ The one thing everybody gets wrong
 
-If Windows shows a *"Windows protected your PC"* box, click **More info → Run
-anyway**. That appears for any unsigned script.
+The converter website works in **both** directions, and it opens in the wrong
+one. Before you touch anything on that page, click **"Dedicated to Co-op"** in
+the top right of the Save converter box.
 
-Everything else is explained inside the wizard — there is nothing you need to
-know in advance.
+You got it right when Step 1 reads *"Choose your dedicated server save."*
 
-## What the wizard walks you through
+If it says *"Choose your co-op save"*, or asks for a **dedicated player ID** or
+a **SteamID64**, you're pointed backwards. The giveaway error is:
 
-| Step | What happens |
+> The selected character already uses 308722BA00000000000000000000000000
+
+In the correct direction there is no player ID to enter at all — you pick the
+folder, pick your character, and convert. The wizard puts this warning on
+screen at the right moment, but it's worth knowing before you start.
+
+## What the wizard does for you
+
+- **Finds your download by itself.** Scans Downloads and Desktop, opens each
+  zip and checks whether there's actually a `Level.sav` inside. You pick from a
+  list instead of hunting for a path. A zip works as-is — no need to extract it.
+- **Finds your save slot by itself.** Detects your Steam save folder; you only
+  get asked if there's genuinely more than one.
+- **Catches the converted file by itself.** After it opens the converter, it
+  watches your Downloads folder and picks up the converted zip the moment it
+  lands. You never go looking for it.
+- **Backs up before it writes.** If a world folder of the same name already
+  exists, it's renamed to `.bak-<timestamp>`, never deleted.
+- **Verifies the result** and offers to launch the game.
+
+Your server download is opened read-only throughout.
+
+## Steps
+
+| | |
 | --- | --- |
 | Welcome | What this does, what you need |
-| 1 | Downloading your world from the host control panel — stop the server first |
-| 2 | Locating that download; it searches for `Level.sav` and validates the world |
-| 3 | Choosing your local save slot; auto-detects your SteamID64 folder |
-| 4 | The conversion, in your browser (the one manual step) |
-| 5 | Importing the converted ZIP, with automatic backup of anything replaced |
-| Done | Where it landed, and how to load it in game |
+| 1 | Download your world from the host panel — stop the server first |
+| 2 | Your download — found automatically |
+| 3 | Convert it, in your browser |
+| 4 | Add it to your game |
+| Done | Launch Palworld |
 
-## Safety
+## Why is the conversion done in a browser?
 
-- Your server download is opened **read-only** and is never modified.
-- If importing would replace an existing world folder, the old one is renamed to
-  `.bak-<timestamp>` rather than deleted.
-- The conversion runs as WebAssembly inside your own browser. Your save is never
-  uploaded anywhere. This script makes no network requests of its own; it only
-  opens a converter page in your default browser.
+Because that's the only part that can't be scripted. Palworld 0.6 switched the
+save container from `PlZ` (zlib) to `PlM`, which is Oodle/Kraken compressed.
+Windows and PowerShell have zlib built in; they have nothing for Oodle. The
+open decoders are thousands of lines of C, which is exactly why the working
+converters compile one to WebAssembly and run it in the browser.
 
-Keep your original server download until you have loaded the converted world and
-confirmed it looks right.
+That's also the good news: the conversion happens **on your machine**, inside
+your browser. Nothing is uploaded. This script makes no network requests of its
+own — it opens a page in your default browser and waits.
+
+The wizard uses the
+[TroubleChute converter](https://hub.tcno.co/games/palworld/converter/), which
+is not affiliated with this project.
 
 ## Requirements
 
 - Windows with PowerShell 5.1 (built in) or newer
-- Palworld installed, and launched at least once so a save folder exists
-- A web browser
+- Palworld installed and launched at least once, so a save folder exists
 - Access to your server host's file manager
-
-## Converters used
-
-The wizard offers a choice of two; both run entirely client-side:
-
-- [TroubleChute Palworld Save Converter](https://hub.tcno.co/games/palworld/converter/)
-- [Physgun Palworld Save Converter](https://physgun.com/tools/palworld-save-converter/)
-
-Neither is affiliated with this project. If their page layout changes, the
-wizard's step 4 instructions may describe buttons slightly differently than what
-you see — the flow is the same: select folder, choose dedicated → co-op, pick
-your character, convert, download.
 
 ## Troubleshooting
 
-**"No Level.sav found"** — wrong folder, or you pointed it at a `.zip` that has
-not been extracted. Extract it first, then select the extracted folder.
+**"The selected character already uses 308722BA…"** — wrong direction on the
+converter site. See the warning above.
 
-**"No save slots found"** — Palworld has never written a save on this PC. Launch
-the game, load any world, quit to desktop, then click Refresh.
+**It can't find my download** — click *Find it myself*, or drag the zip onto
+the box. Unextracted zips are fine.
 
-**Converted world does not appear in game** — confirm it landed in the folder
-named with a 17-digit number (your Steam ID). The wizard's final screen has a
-button that opens it.
+**"Palworld has not made a save on this PC yet"** — launch the game, load any
+world, quit, then click *Change*.
 
-## Files
+**The map is black / my explored area is gone** — map discovery lives per
+player in `LocalData.sav` and isn't part of the world. Copy `LocalData.sav`
+from the world folder you used while playing on the server into the new world
+folder.
 
-| File | Purpose |
-| --- | --- |
-| `Run Palworld Save Converter.cmd` | Launcher — double-click this |
-| `Convert-PalworldSave.ps1` | The wizard |
-| `READ ME FIRST.txt` | Offline version of the quick-start, for people who download the ZIP |
-
-Both scripts must stay in the same folder.
+**Something looks wrong in the world** — stop playing, delete the imported
+folder, and convert again from your original download. That's why you keep it.
 
 ## Contributing
 
-Issues and pull requests welcome — particularly corrections to the step 4
-instructions if a converter's interface has changed.
+Issues and pull requests welcome — especially corrections if the converter site
+changes its layout or wording.
 
 ## License
 
