@@ -1,0 +1,53 @@
+PALWORLD SAVE CONVERTER
+
+Moves your world off a rented dedicated server onto your own PC.
+
+
+START HERE
+    Double-click:   Run Palworld Save Converter.cmd
+
+If Windows says "Windows protected your PC", click More info, then Run anyway.
+
+
+THE ONE THING PEOPLE GET WRONG
+
+The converter website works in both directions, and it opens in the WRONG
+one. Before you do anything on that page, click "Dedicated to Co-op" in the
+top right of the Save converter box.
+
+You know you got it right when Step 1 says "Choose your dedicated server
+save". If it says "Choose your co-op save", or asks you for a "dedicated
+player ID" or a SteamID64, you are in the wrong direction - switch it and
+start that page over.
+
+In the correct direction there is no player ID to enter at all. You pick
+the folder, pick your character, and convert.
+
+
+IF SOMETHING GOES WRONG
+
+    "The selected character already uses 308722BA0000..."
+        Wrong direction. See above.
+
+    It cannot find my download
+        Click "Find it myself" and point it at the zip, or drag the zip
+        onto the box. You do not need to unzip it first.
+
+    "Palworld has not made a save on this PC yet"
+        Launch the game, load any world, quit, then click Change.
+
+    The world is missing from the game
+        It went into the folder named with a 17-digit number - the last
+        screen has a button that opens it.
+
+    The map is black / my explored area is gone
+        Map discovery is stored per player in LocalData.sav and is not
+        part of the world. Copy LocalData.sav from the world folder you
+        used while playing on the server into the new world folder.
+
+    My pals or bases look wrong
+        Do not keep playing. Delete the imported world folder and convert
+        again from your original download - that is why you keep it.
+
+
+Keep both files together in the same folder.
